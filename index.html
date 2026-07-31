@@ -243,11 +243,9 @@
 
   <script>
     const TOTAL_TICKETS = 100;
-    
-    // Escribe aquí tus 10 dígitos de teléfono entre las comillas:
-    const MY_PHONE_NUMBER = "TUS_10_DIGITOS"; 
+    const PHONE_NUMBER = "5217121947091"; 
 
-    // Números vendidos (ejemplo: const soldTickets = [3, 14, 25];)
+    // Aquí agregas los números que vayas vendiendo (ej. const soldTickets = [5, 12, 88];)
     const soldTickets = [];
 
     const selectedTickets = new Set();
@@ -299,8 +297,7 @@
 
       const message = `¡Hola! Mi nombre es *${name}*. Me gustaría apartar el/los boleto(s) *#${ticketsStr}* para la Rifa en *Sorteos Atlacomulco* ($1,200 MXN en efectivo).\n\nTotal a pagar: *$${totalPay} MXN*.\n\nQuedo a la espera de los datos de pago.`;
 
-      const fullPhone = "521" + MY_PHONE_NUMBER.replace(/\D/g, '');
-      const whatsappUrl = `https://api.whatsapp.com/send?phone=${fullPhone}&text=${encodeURIComponent(message)}`;
+      const whatsappUrl = `https://api.whatsapp.com/send?phone=${PHONE_NUMBER}&text=${encodeURIComponent(message)}`;
       window.open(whatsappUrl, '_blank');
     });
   </script>
