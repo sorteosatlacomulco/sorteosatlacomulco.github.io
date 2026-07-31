@@ -221,9 +221,7 @@
     <div class="legend-item"><div class="color-box box-sold"></div> Vendido</div>
   </div>
 
-  <div class="grid-container" id="ticketsContainer">
-    <!-- Se generan los 100 boletos -->
-  </div>
+  <div class="grid-container" id="ticketsContainer"></div>
 
   <div class="form-container">
     <form id="raffleForm">
@@ -244,27 +242,46 @@
   <script>
     const TOTAL_TICKETS = 100;
     const PHONE_NUMBER = "5217121947091"; 
-
-    // Aquí agregas los números que vayas vendiendo (ej. const soldTickets = [5, 12, 88];)
-    const soldTickets = [];
+    const SHEETS_API_URL = "https://sheetdb.io/api/v1/xgnnw97uot5hv";
 
     const selectedTickets = new Set();
     const container = document.getElementById('ticketsContainer');
     const selectedInput = document.getElementById('selectedTicketsInput');
     const btnSubmit = document.getElementById('btnSubmit');
 
-    for (let i = 1; i <= TOTAL_TICKETS; i++) {
-      const ticket = document.createElement('div');
-      ticket.classList.add('ticket');
-      ticket.textContent = i;
+    async function loadTickets() {
+      let soldTickets = [];
 
-      if (soldTickets.includes(i)) {
-        ticket.classList.add('sold');
-      } else {
-        ticket.addEventListener('click', () => toggleTicket(i, ticket));
+      try {
+        const response = await fetch(SHEETS_API_URL);
+        const data = await response.json();
+        
+        if (Array.isArray(data)) {
+          data.forEach(item => {
+            const estado = String(item.estado || '').toLowerCase().trim();
+            if (item.numero && (estado === 'vendido' || estado === 'apartado')) {
+              soldTickets.push(parseInt(item.numero));
+            }
+          });
+        }
+      } catch (error) {
+        console.error("Error al cargar datos desde Google Sheets:", error);
       }
 
-      container.appendChild(ticket);
+      container.innerHTML = "";
+      for (let i = 1; i <= TOTAL_TICKETS; i++) {
+        const ticket = document.createElement('div');
+        ticket.classList.add('ticket');
+        ticket.textContent = i;
+
+        if (soldTickets.includes(i)) {
+          ticket.classList.add('sold');
+        } else {
+          ticket.addEventListener('click', () => toggleTicket(i, ticket));
+        }
+
+        container.appendChild(ticket);
+      }
     }
 
     function toggleTicket(number, element) {
@@ -300,6 +317,8 @@
       const whatsappUrl = `https://api.whatsapp.com/send?phone=${PHONE_NUMBER}&text=${encodeURIComponent(message)}`;
       window.open(whatsappUrl, '_blank');
     });
+
+    loadTickets();
   </script>
 </body>
 </html>
