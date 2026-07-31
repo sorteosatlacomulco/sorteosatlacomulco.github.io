@@ -14,6 +14,7 @@
       --text: #f8fafc;
       --text-muted: #94a3b8;
       --selected: #f59e0b;
+      --sold: #ef4444;
     }
 
     * {
@@ -115,13 +116,21 @@
       transition: all 0.2s;
     }
 
-    .ticket:hover {
+    .ticket:hover:not(.sold) {
       background: #475569;
     }
 
     .ticket.selected {
       background: var(--selected);
       color: #000;
+    }
+
+    .ticket.sold {
+      background: var(--sold);
+      color: #ffffff;
+      cursor: not-allowed;
+      opacity: 0.6;
+      text-decoration: line-through;
     }
 
     .checkout-panel {
@@ -164,6 +173,13 @@
     .btn-whatsapp:hover {
       background-color: #16a34a;
     }
+
+    #loading-msg {
+      text-align: center;
+      color: var(--selected);
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
@@ -180,6 +196,7 @@
       <button onclick="clearSelection()" style="background-color: #ef4444;">❌ Limpiar Selección</button>
     </div>
 
+    <div id="loading-msg">Cargando boletos disponibles...</div>
     <div class="grid-container" id="grid"></div>
 
     <div class="checkout-panel">
@@ -197,17 +214,47 @@
 
   <script>
     const PHONE_NUMBER = "527121947091"; 
-    const TOTAL_TICKETS = 800; // Ajustado a 800 boletos
-    let selectedTickets = [];
+    const TOTAL_TICKETS = 800; 
+    const SHEETDB_URL = "https://sheetdb.io/api/v1/xgnnw97uot5hv"; 
 
-    // Generar la cuadrícula de 800 boletos
-    const grid = document.getElementById('grid');
-    for (let i = 1; i <= TOTAL_TICKETS; i++) {
-      const ticket = document.createElement('div');
-      ticket.classList.add('ticket');
-      ticket.innerText = i;
-      ticket.onclick = () => toggleTicket(i, ticket);
-      grid.appendChild(ticket);
+    let selectedTickets = [];
+    let soldTickets = [];
+
+    // Cargar números vendidos desde Google Sheets al iniciar
+    async function fetchSoldTickets() {
+      try {
+        const response = await fetch(SHEETDB_URL);
+        const data = await response.json();
+        
+        soldTickets = data
+          .filter(item => item.estado && item.estado.toLowerCase() === 'vendido')
+          .map(item => parseInt(item.numero));
+
+        document.getElementById('loading-msg').style.display = 'none';
+        renderGrid();
+      } catch (error) {
+        console.error('Error al conectar con Google Sheets:', error);
+        document.getElementById('loading-msg').innerText = '⚠️ Error al cargar boletos. Revisa tu conexión.';
+      }
+    }
+
+    function renderGrid() {
+      const grid = document.getElementById('grid');
+      grid.innerHTML = '';
+
+      for (let i = 1; i <= TOTAL_TICKETS; i++) {
+        const ticket = document.createElement('div');
+        ticket.classList.add('ticket');
+        ticket.innerText = i;
+
+        if (soldTickets.includes(i)) {
+          ticket.classList.add('sold');
+        } else {
+          ticket.onclick = () => toggleTicket(i, ticket);
+        }
+
+        grid.appendChild(ticket);
+      }
     }
 
     function toggleTicket(number, element) {
@@ -232,18 +279,27 @@
     }
 
     function selectRandom() {
-      let randomNum;
-      do {
-        randomNum = Math.floor(Math.random() * TOTAL_TICKETS) + 1;
-      } while (selectedTickets.includes(randomNum));
+      let availableTickets = [];
 
+      for (let i = 1; i <= TOTAL_TICKETS; i++) {
+        if (!soldTickets.includes(i) && !selectedTickets.includes(i)) {
+          availableTickets.push(i);
+        }
+      }
+
+      if (availableTickets.length === 0) {
+        alert('Ya no quedan boletos disponibles.');
+        return;
+      }
+
+      const randomNum = availableTickets[Math.floor(Math.random() * availableTickets.length)];
       const ticketsElements = document.querySelectorAll('.ticket');
       toggleTicket(randomNum, ticketsElements[randomNum - 1]);
     }
 
     function clearSelection() {
       selectedTickets = [];
-      document.querySelectorAll('.ticket').forEach(el => el.classList.remove('selected'));
+      document.querySelectorAll('.ticket:not(.sold)').forEach(el => el.classList.remove('selected'));
       updateUI();
     }
 
@@ -266,6 +322,9 @@
       const url = `https://wa.me/${PHONE_NUMBER}?text=${encodeURIComponent(mensaje)}`;
       window.open(url, '_blank');
     }
+
+    // Iniciar carga al abrir la página
+    fetchSoldTickets();
   </script>
 
 </body>
