@@ -3,18 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gran Rifa - El Chore</title>
+  <title>Sorteos Atlacomulco</title>
   <style>
     :root {
       --bg-color: #0f172a;
       --card-bg: #1e293b;
-      --primary: #3b82f6;
-      --primary-hover: #2563eb;
-      --accent: #22c55e;
-      --text: #f8fafc;
+      --text-main: #f8fafc;
       --text-muted: #94a3b8;
-      --selected: #f59e0b;
-      --sold: #ef4444;
+      --accent: #22c55e;
+      --accent-hover: #16a34a;
+      --ticket-free: #334155;
+      --ticket-sold: #ef4444;
+      --ticket-selected: #3b82f6;
     }
 
     * {
@@ -26,306 +26,283 @@
 
     body {
       background-color: var(--bg-color);
-      color: var(--text);
-      padding: 20px 10px;
+      color: var(--text-main);
+      padding: 20px;
       display: flex;
-      justify-content: center;
-    }
-
-    .container {
-      max-width: 800px;
-      width: 100%;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
     }
 
     header {
       text-align: center;
       margin-bottom: 25px;
-      background: var(--card-bg);
-      padding: 20px;
-      border-radius: 12px;
-      border: 1px solid #334155;
+      max-width: 600px;
     }
 
     h1 {
-      color: var(--primary);
-      font-size: 1.8rem;
-      margin-bottom: 8px;
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+      color: #ffffff;
     }
 
-    p {
+    .subtitle {
       color: var(--text-muted);
-      font-size: 0.95rem;
+      font-size: 1.1rem;
+      margin-bottom: 15px;
     }
 
-    .badge-price {
+    .prize-card {
+      background-color: var(--card-bg);
+      border: 2px solid var(--accent);
+      border-radius: 12px;
+      padding: 15px 20px;
       display: inline-block;
-      background: var(--accent);
-      color: #000;
-      font-weight: bold;
-      padding: 4px 12px;
-      border-radius: 20px;
-      margin-top: 10px;
-      font-size: 0.9rem;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 15px rgba(34, 197, 94, 0.2);
     }
 
-    .controls {
+    .prize-card h2 {
+      font-size: 1.4rem;
+      color: var(--accent);
+    }
+
+    .legend {
       display: flex;
-      gap: 10px;
       justify-content: center;
+      gap: 15px;
       margin-bottom: 20px;
       flex-wrap: wrap;
     }
 
-    button {
-      background-color: var(--primary);
-      color: white;
-      border: none;
-      padding: 10px 18px;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.2s;
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
     }
 
-    button:hover {
-      background-color: var(--primary-hover);
+    .color-box {
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
     }
+
+    .box-free { background-color: var(--ticket-free); }
+    .box-sold { background-color: var(--ticket-sold); }
+    .box-selected { background-color: var(--ticket-selected); }
 
     .grid-container {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(55px, 1fr));
-      gap: 8px;
-      max-height: 450px;
-      overflow-y: auto;
-      padding: 10px;
-      background: var(--card-bg);
-      border-radius: 12px;
-      border: 1px solid #334155;
+      gap: 10px;
+      width: 100%;
+      max-width: 700px;
+      margin-bottom: 30px;
     }
 
     .ticket {
-      background: #334155;
-      color: var(--text);
-      padding: 12px 0;
-      text-align: center;
-      border-radius: 6px;
+      aspect-ratio: 1;
+      background-color: var(--ticket-free);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       font-weight: bold;
-      font-size: 0.85rem;
+      font-size: 1.1rem;
+      border-radius: 8px;
       cursor: pointer;
       user-select: none;
-      transition: all 0.2s;
+      transition: transform 0.1s, background-color 0.2s;
     }
 
     .ticket:hover:not(.sold) {
-      background: #475569;
+      transform: scale(1.05);
     }
 
     .ticket.selected {
-      background: var(--selected);
-      color: #000;
+      background-color: var(--ticket-selected);
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
     }
 
     .ticket.sold {
-      background: var(--sold);
-      color: #ffffff;
+      background-color: var(--ticket-sold);
       cursor: not-allowed;
       opacity: 0.6;
       text-decoration: line-through;
     }
 
-    .checkout-panel {
-      margin-top: 25px;
-      background: var(--card-bg);
-      padding: 20px;
+    .form-container {
+      background-color: var(--card-bg);
+      padding: 25px;
       border-radius: 12px;
-      border: 1px solid #334155;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
     }
 
     .form-group {
-      margin-bottom: 12px;
+      margin-bottom: 15px;
     }
 
     label {
       display: block;
-      margin-bottom: 5px;
-      font-size: 0.85rem;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
       color: var(--text-muted);
     }
 
-    input {
+    input[type="text"] {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       border-radius: 6px;
       border: 1px solid #475569;
-      background: #0f172a;
-      color: white;
+      background-color: #0f172a;
+      color: #fff;
       font-size: 1rem;
     }
 
-    .btn-whatsapp {
-      background-color: var(--accent);
+    input[type="text"]:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .btn-submit {
       width: 100%;
       padding: 14px;
+      background-color: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
       font-size: 1.1rem;
-      margin-top: 10px;
-    }
-
-    .btn-whatsapp:hover {
-      background-color: #16a34a;
-    }
-
-    #loading-msg {
-      text-align: center;
-      color: var(--selected);
-      margin-bottom: 15px;
       font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-submit:hover {
+      background-color: var(--accent-hover);
+    }
+
+    .btn-submit:disabled {
+      background-color: #475569;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 480px) {
+      .grid-container {
+        grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+        gap: 6px;
+      }
+      .ticket {
+        font-size: 0.95rem;
+      }
     }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <header>
-      <h1>🎟️ Gran Rifa "El Chore"</h1>
-      <p>Premio: $4,000 MXN en Efectivo 💵</p>
-      <div class="badge-price">Boleto: $8 MXN</div>
-    </header>
-
-    <div class="controls">
-      <button onclick="selectRandom()">🎲 Número al Azar</button>
-      <button onclick="clearSelection()" style="background-color: #ef4444;">❌ Limpiar Selección</button>
+  <header>
+    <h1>🎟️ Sorteos Atlacomulco</h1>
+    <p class="subtitle">¡Selecciona tus números de la suerte y apártalos por WhatsApp!</p>
+    <div class="prize-card">
+      <h2>Premio: $1,000 MXN en Efectivo 💵</h2>
+      <p style="margin-top:5px; font-size: 0.9rem; color: #cbd5e1;">Costo por boleto: <strong>$20 MXN</strong></p>
     </div>
+  </header>
 
-    <div id="loading-msg">Cargando boletos disponibles...</div>
-    <div class="grid-container" id="grid"></div>
+  <div class="legend">
+    <div class="legend-item"><div class="color-box box-free"></div> Disponible</div>
+    <div class="legend-item"><div class="color-box box-selected"></div> Seleccionado</div>
+    <div class="legend-item"><div class="color-box box-sold"></div> Vendido</div>
+  </div>
 
-    <div class="checkout-panel">
-      <h3>Confirmar Apartado</h3>
-      <p style="margin-bottom: 15px;">Boletos seleccionados: <strong id="selected-list" style="color: var(--selected);">Ninguno</strong></p>
-      
+  <div class="grid-container" id="ticketsContainer">
+    <!-- Se generan los 100 boletos con JS -->
+  </div>
+
+  <div class="form-container">
+    <form id="raffleForm">
       <div class="form-group">
-        <label for="nombre">Tu Nombre Completo:</label>
-        <input type="text" id="nombre" placeholder="Ej. Juan Pérez">
+        <label for="userName">Nombre Completo:</label>
+        <input type="text" id="userName" placeholder="Ej. Juan Pérez" required>
       </div>
-
-      <button class="btn-whatsapp" onclick="sendWhatsApp()">📲 Apartar por WhatsApp</button>
-    </div>
+      <div class="form-group">
+        <label>Boletos seleccionados:</label>
+        <input type="text" id="selectedTicketsInput" value="Ninguno" readonly style="color: var(--accent); font-weight: bold;">
+      </div>
+      <button type="submit" class="btn-submit" id="btnSubmit" disabled>
+        Apartar por WhatsApp 💬
+      </button>
+    </form>
   </div>
 
   <script>
-    const PHONE_NUMBER = "527121947091"; 
-    const TOTAL_TICKETS = 800; 
-    const SHEETDB_URL = "https://sheetdb.io/api/v1/xgnnw97uot5hv"; 
+    // Configuración para 100 números
+    const TOTAL_TICKETS = 100;
+    const PHONE_NUMBER = "5210000000000"; // Sustituye aquí por tu número de WhatsApp a 10 dígitos (ej. 5217121234567)
 
-    let selectedTickets = [];
-    let soldTickets = [];
+    // Aquí registras los números vendidos (puedes agregarlos entre comillas)
+    // Ejemplo: const soldTickets = [5, 12, 88];
+    const soldTickets = [];
 
-    // Cargar números vendidos desde Google Sheets al iniciar
-    async function fetchSoldTickets() {
-      try {
-        const response = await fetch(SHEETDB_URL);
-        const data = await response.json();
-        
-        soldTickets = data
-          .filter(item => item.estado && item.estado.toLowerCase() === 'vendido')
-          .map(item => parseInt(item.numero));
+    const selectedTickets = new Set();
+    const container = document.getElementById('ticketsContainer');
+    const selectedInput = document.getElementById('selectedTicketsInput');
+    const btnSubmit = document.getElementById('btnSubmit');
 
-        document.getElementById('loading-msg').style.display = 'none';
-        renderGrid();
-      } catch (error) {
-        console.error('Error al conectar con Google Sheets:', error);
-        document.getElementById('loading-msg').innerText = '⚠️ Error al cargar boletos. Revisa tu conexión.';
+    // Generar la cuadrícula de 100 números
+    for (let i = 1; i <= TOTAL_TICKETS; i++) {
+      const ticket = document.createElement('div');
+      ticket.classList.add('ticket');
+      ticket.textContent = i;
+
+      if (soldTickets.includes(i)) {
+        ticket.classList.add('sold');
+      } else {
+        ticket.addEventListener('click', () => toggleTicket(i, ticket));
       }
-    }
 
-    function renderGrid() {
-      const grid = document.getElementById('grid');
-      grid.innerHTML = '';
-
-      for (let i = 1; i <= TOTAL_TICKETS; i++) {
-        const ticket = document.createElement('div');
-        ticket.classList.add('ticket');
-        ticket.innerText = i;
-
-        if (soldTickets.includes(i)) {
-          ticket.classList.add('sold');
-        } else {
-          ticket.onclick = () => toggleTicket(i, ticket);
-        }
-
-        grid.appendChild(ticket);
-      }
+      container.appendChild(ticket);
     }
 
     function toggleTicket(number, element) {
-      const index = selectedTickets.indexOf(number);
-      if (index > -1) {
-        selectedTickets.splice(index, 1);
+      if (selectedTickets.has(number)) {
+        selectedTickets.delete(number);
         element.classList.remove('selected');
       } else {
-        selectedTickets.push(number);
+        selectedTickets.add(number);
         element.classList.add('selected');
       }
-      updateUI();
+      updateForm();
     }
 
-    function updateUI() {
-      const listText = document.getElementById('selected-list');
-      if (selectedTickets.length === 0) {
-        listText.innerText = 'Ninguno';
+    function updateForm() {
+      const sorted = Array.from(selectedTickets).sort((a, b) => a - b);
+      if (sorted.length > 0) {
+        selectedInput.value = sorted.join(', ');
+        btnSubmit.disabled = false;
       } else {
-        listText.innerText = selectedTickets.sort((a, b) => a - b).join(', ');
+        selectedInput.value = "Ninguno";
+        btnSubmit.disabled = true;
       }
     }
 
-    function selectRandom() {
-      let availableTickets = [];
+    document.getElementById('raffleForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('userName').value.trim();
+      const ticketsStr = Array.from(selectedTickets).sort((a, b) => a - b).join(', ');
+      const totalPay = selectedTickets.size * 20;
 
-      for (let i = 1; i <= TOTAL_TICKETS; i++) {
-        if (!soldTickets.includes(i) && !selectedTickets.includes(i)) {
-          availableTickets.push(i);
-        }
-      }
+      const message = `¡Hola! Mi nombre es *${name}*. Me gustaría apartar el/los boleto(s) *#${ticketsStr}* para la Rifa en *Sorteos Atlacomulco* ($1,000 MXN en efectivo).\n\nTotal a pagar: *$${totalPay} MXN*.\n\nQuedo a la espera de los datos de pago.`;
 
-      if (availableTickets.length === 0) {
-        alert('Ya no quedan boletos disponibles.');
-        return;
-      }
-
-      const randomNum = availableTickets[Math.floor(Math.random() * availableTickets.length)];
-      const ticketsElements = document.querySelectorAll('.ticket');
-      toggleTicket(randomNum, ticketsElements[randomNum - 1]);
-    }
-
-    function clearSelection() {
-      selectedTickets = [];
-      document.querySelectorAll('.ticket:not(.sold)').forEach(el => el.classList.remove('selected'));
-      updateUI();
-    }
-
-    function sendWhatsApp() {
-      const nombre = document.getElementById('nombre').value.trim();
-
-      if (selectedTickets.length === 0) {
-        alert('Por favor selecciona al menos un número.');
-        return;
-      }
-
-      if (!nombre) {
-        alert('Por favor ingresa tu nombre.');
-        return;
-      }
-
-      const boletosStr = selectedTickets.sort((a, b) => a - b).join(', ');
-      const mensaje = `¡Hola! Mi nombre es *${nombre}*. Me gustaría apartar el/los boleto(s) *#${boletosStr}* para la Rifa *El Chore* ($4,000 en efectivo). Quedo a la espera de los datos de pago.`;
-
-      const url = `https://wa.me/${PHONE_NUMBER}?text=${encodeURIComponent(mensaje)}`;
-      window.open(url, '_blank');
-    }
-
-    // Iniciar carga al abrir la página
-    fetchSoldTickets();
+      const whatsappUrl = `https://api.whatsapp.com/send?phone=${PHONE_NUMBER}&text=${encodeURIComponent(message)}`;
+      window.open(whatsappUrl, '_blank');
+    });
   </script>
-
 </body>
 </html>
