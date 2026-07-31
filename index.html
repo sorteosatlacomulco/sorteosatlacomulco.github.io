@@ -3,196 +3,270 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Motor de Efectos Visuales - Túnel 3D</title>
+  <title>Gran Rifa - El Chore</title>
   <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --accent: #22c55e;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --selected: #f59e0b;
+    }
+
     * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     body {
-      background-color: #05050a;
-      color: #ffffff;
-      overflow: hidden;
-      height: 100vh;
+      background-color: var(--bg-color);
+      color: var(--text);
+      padding: 20px 10px;
       display: flex;
-      flex-direction: column;
+      justify-content: center;
     }
 
-    /* Panel de Control Flotante */
-    .hud {
-      position: absolute;
-      top: 15px;
-      left: 15px;
-      z-index: 10;
-      background: rgba(15, 15, 25, 0.85);
-      backdrop-filter: blur(8px);
-      padding: 12px 20px;
+    .container {
+      max-width: 800px;
+      width: 100%;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 25px;
+      background: var(--card-bg);
+      padding: 20px;
       border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-      display: flex;
-      gap: 15px;
-      align-items: center;
+      border: 1px solid #334155;
     }
 
-    .hud-title {
-      font-weight: 700;
-      color: #00ffcc;
+    h1 {
+      color: var(--primary);
+      font-size: 1.8rem;
+      margin-bottom: 8px;
+    }
+
+    p {
+      color: var(--text-muted);
       font-size: 0.95rem;
-      letter-spacing: 1px;
     }
 
-    .hud-instructions {
+    .badge-price {
+      display: inline-block;
+      background: var(--accent);
+      color: #000;
+      font-weight: bold;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-top: 10px;
+      font-size: 0.9rem;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(55px, 1fr));
+      gap: 8px;
+      max-height: 450px;
+      overflow-y: auto;
+      padding: 10px;
+      background: var(--card-bg);
+      border-radius: 12px;
+      border: 1px solid #334155;
+    }
+
+    .ticket {
+      background: #334155;
+      color: var(--text);
+      padding: 12px 0;
+      text-align: center;
+      border-radius: 6px;
+      font-weight: bold;
       font-size: 0.85rem;
-      color: #a0a5c0;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s;
     }
 
-    canvas {
-      width: 100vw;
-      height: 100vh;
+    .ticket:hover {
+      background: #475569;
+    }
+
+    .ticket.selected {
+      background: var(--selected);
+      color: #000;
+    }
+
+    .checkout-panel {
+      margin-top: 25px;
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid #334155;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    label {
       display: block;
+      margin-bottom: 5px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #475569;
+      background: #0f172a;
+      color: white;
+      font-size: 1rem;
+    }
+
+    .btn-whatsapp {
+      background-color: var(--accent);
+      width: 100%;
+      padding: 14px;
+      font-size: 1.1rem;
+      margin-top: 10px;
+    }
+
+    .btn-whatsapp:hover {
+      background-color: #16a34a;
     }
   </style>
 </head>
 <body>
 
-  <div class="hud">
-    <div class="hud-title">🚀 TÚNEL DE HIPERVELOCIDAD 3D</div>
-    <div class="hud-instructions">Mueve el mouse para dirigir el túnel</div>
+  <div class="container">
+    <header>
+      <h1>🎟️ Gran Rifa "El Chore"</h1>
+      <p>Premio: $4,000 MXN en Efectivo 💵</p>
+      <div class="badge-price">Boleto: $8 MXN</div>
+    </header>
+
+    <div class="controls">
+      <button onclick="selectRandom()">🎲 Número al Azar</button>
+      <button onclick="clearSelection()" style="background-color: #ef4444;">❌ Limpiar Selección</button>
+    </div>
+
+    <div class="grid-container" id="grid"></div>
+
+    <div class="checkout-panel">
+      <h3>Confirmar Apartado</h3>
+      <p style="margin-bottom: 15px;">Boletos seleccionados: <strong id="selected-list" style="color: var(--selected);">Ninguno</strong></p>
+      
+      <div class="form-group">
+        <label for="nombre">Tu Nombre Completo:</label>
+        <input type="text" id="nombre" placeholder="Ej. Juan Pérez">
+      </div>
+
+      <button class="btn-whatsapp" onclick="sendWhatsApp()">📲 Apartar por WhatsApp</button>
+    </div>
   </div>
 
-  <canvas id="canvas"></canvas>
-
   <script>
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
+    const PHONE_NUMBER = "527121947091"; 
+    const TOTAL_TICKETS = 800; // Ajustado a 800 boletos
+    let selectedTickets = [];
 
-    function resize() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-    resize();
-    window.addEventListener('resize', resize);
-
-    // --- PARÁMETROS DEL TÚNEL 3D ---
-    const ringCount = 25;       // Cantidad de anillos de profundidad
-    const sides = 8;            // Geometría del túnel (Octágono)
-    const tunnelRadius = 300;   // Ancho del túnel
-    let speed = 4;              // Velocidad de avance
-
-    // Control de perspectiva del Mouse
-    const targetMouse = { x: 0, y: 0 };
-    const currentMouse = { x: 0, y: 0 };
-
-    window.addEventListener('mousemove', (e) => {
-      // Normalizar coordenadas del mouse de -1 a 1 desde el centro
-      targetMouse.x = (e.clientX - canvas.width / 2) / (canvas.width / 2);
-      targetMouse.y = (e.clientY - canvas.height / 2) / (canvas.height / 2);
-    });
-
-    // Crear la estructura de anillos en el eje Z (profundidad)
-    const rings = [];
-    for (let i = 0; i < ringCount; i++) {
-      rings.push({
-        z: i * 80, // Distancia entre cada anillo
-        rot: i * 0.05 // Rotación inicial
-      });
+    // Generar la cuadrícula de 800 boletos
+    const grid = document.getElementById('grid');
+    for (let i = 1; i <= TOTAL_TICKETS; i++) {
+      const ticket = document.createElement('div');
+      ticket.classList.add('ticket');
+      ticket.innerText = i;
+      ticket.onclick = () => toggleTicket(i, ticket);
+      grid.appendChild(ticket);
     }
 
-    // --- PROYECCIÓN MATEMÁTICA 3D A 2D ---
-    function project3D(x, y, z, fov = 350) {
-      const scale = fov / (fov + z);
-      return {
-        x: x * scale + canvas.width / 2 + currentMouse.x * (scale * 200),
-        y: y * scale + canvas.height / 2 + currentMouse.y * (scale * 200),
-        scale: scale
-      };
+    function toggleTicket(number, element) {
+      const index = selectedTickets.indexOf(number);
+      if (index > -1) {
+        selectedTickets.splice(index, 1);
+        element.classList.remove('selected');
+      } else {
+        selectedTickets.push(number);
+        element.classList.add('selected');
+      }
+      updateUI();
     }
 
-    // --- BUCLE PRINCIPAL ---
-    let frame = 0;
-    function animate() {
-      frame++;
+    function updateUI() {
+      const listText = document.getElementById('selected-list');
+      if (selectedTickets.length === 0) {
+        listText.innerText = 'Ninguno';
+      } else {
+        listText.innerText = selectedTickets.sort((a, b) => a - b).join(', ');
+      }
+    }
 
-      // Limpiar fondo con estela progresiva (Motion Blur)
-      ctx.fillStyle = 'rgba(5, 5, 10, 0.25)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    function selectRandom() {
+      let randomNum;
+      do {
+        randomNum = Math.floor(Math.random() * TOTAL_TICKETS) + 1;
+      } while (selectedTickets.includes(randomNum));
 
-      // Suavizado del movimiento de cámara
-      currentMouse.x += (targetMouse.x - currentMouse.x) * 0.05;
-      currentMouse.y += (targetMouse.y - currentMouse.y) * 0.05;
+      const ticketsElements = document.querySelectorAll('.ticket');
+      toggleTicket(randomNum, ticketsElements[randomNum - 1]);
+    }
 
-      // Ordenar y renderizar anillos desde el fondo hacia el frente
-      rings.sort((a, b) => b.z - a.z);
+    function clearSelection() {
+      selectedTickets = [];
+      document.querySelectorAll('.ticket').forEach(el => el.classList.remove('selected'));
+      updateUI();
+    }
 
-      for (let i = 0; i < rings.length; i++) {
-        const ring = rings[i];
+    function sendWhatsApp() {
+      const nombre = document.getElementById('nombre').value.trim();
 
-        // Mover el anillo hacia la cámara en Z
-        ring.z -= speed;
-        ring.rot += 0.005; // Rotación helicoidal constante
-
-        // Si el anillo traspasa la cámara, lo mandamos al fondo
-        if (ring.z <= -300) {
-          ring.z += ringCount * 80;
-        }
-
-        // Calcular los vértices del polígono
-        const points = [];
-        for (let j = 0; j < sides; j++) {
-          const angle = (j / sides) * Math.PI * 2 + ring.rot;
-          const x3d = Math.cos(angle) * tunnelRadius;
-          const y3d = Math.sin(angle) * tunnelRadius;
-
-          const p2d = project3D(x3d, y3d, ring.z);
-          points.push(p2d);
-        }
-
-        // Color cian/neón basado en la profundidad (Z)
-        const depthAlpha = Math.max(0, 1 - ring.z / (ringCount * 80));
-        const hue = (frame * 0.5 + ring.z * 0.2) % 360;
-
-        ctx.strokeStyle = `hsla(${hue}, 100%, 60%, ${depthAlpha})`;
-        ctx.lineWidth = Math.max(1, 4 * points[0].scale);
-
-        // Dibujar anillo
-        ctx.beginPath();
-        for (let j = 0; j < sides; j++) {
-          const next = (j + 1) % sides;
-          ctx.moveTo(points[j].x, points[j].y);
-          ctx.lineTo(points[next].x, points[next].y);
-        }
-        ctx.stroke();
-
-        // Dibujar líneas longitudinales para conectar la red 3D
-        if (i < rings.length - 1) {
-          const nextRing = rings[i + 1];
-          ctx.strokeStyle = `hsla(${hue}, 100%, 50%, ${depthAlpha * 0.3})`;
-          ctx.lineWidth = 1;
-
-          for (let j = 0; j < sides; j++) {
-            const angleNext = (j / sides) * Math.PI * 2 + nextRing.rot;
-            const pNext = project3D(
-              Math.cos(angleNext) * tunnelRadius,
-              Math.sin(angleNext) * tunnelRadius,
-              nextRing.z
-            );
-
-            ctx.beginPath();
-            ctx.moveTo(points[j].x, points[j].y);
-            ctx.lineTo(pNext.x, pNext.y);
-            ctx.stroke();
-          }
-        }
+      if (selectedTickets.length === 0) {
+        alert('Por favor selecciona al menos un número.');
+        return;
       }
 
-      requestAnimationFrame(animate);
-    }
+      if (!nombre) {
+        alert('Por favor ingresa tu nombre.');
+        return;
+      }
 
-    animate();
+      const boletosStr = selectedTickets.sort((a, b) => a - b).join(', ');
+      const mensaje = `¡Hola! Mi nombre es *${nombre}*. Me gustaría apartar el/los boleto(s) *#${boletosStr}* para la Rifa *El Chore* ($4,000 en efectivo). Quedo a la espera de los datos de pago.`;
+
+      const url = `https://wa.me/${PHONE_NUMBER}?text=${encodeURIComponent(mensaje)}`;
+      window.open(url, '_blank');
+    }
   </script>
+
 </body>
 </html>
