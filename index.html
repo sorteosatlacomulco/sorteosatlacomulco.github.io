@@ -210,7 +210,7 @@
     <h1>🎟️ Sorteos Atlacomulco</h1>
     <p class="subtitle">¡Selecciona tus números de la suerte y apártalos por WhatsApp!</p>
     <div class="prize-card">
-      <h2>Premio: $1,000 MXN en Efectivo 💵</h2>
+      <h2>Premio: $1,200 MXN en Efectivo 💵</h2>
       <p style="margin-top:5px; font-size: 0.9rem; color: #cbd5e1;">Costo por boleto: <strong>$20 MXN</strong></p>
     </div>
   </header>
@@ -222,7 +222,7 @@
   </div>
 
   <div class="grid-container" id="ticketsContainer">
-    <!-- Se generan los 100 boletos con JS -->
+    <!-- Se generan los 100 boletos -->
   </div>
 
   <div class="form-container">
@@ -242,12 +242,12 @@
   </div>
 
   <script>
-    // Configuración para 100 números
     const TOTAL_TICKETS = 100;
-    const PHONE_NUMBER = "5210000000000"; // Sustituye aquí por tu número de WhatsApp a 10 dígitos (ej. 5217121234567)
+    
+    // Escribe aquí tus 10 dígitos de teléfono entre las comillas:
+    const MY_PHONE_NUMBER = "TUS_10_DIGITOS"; 
 
-    // Aquí registras los números vendidos (puedes agregarlos entre comillas)
-    // Ejemplo: const soldTickets = [5, 12, 88];
+    // Números vendidos (ejemplo: const soldTickets = [3, 14, 25];)
     const soldTickets = [];
 
     const selectedTickets = new Set();
@@ -255,7 +255,6 @@
     const selectedInput = document.getElementById('selectedTicketsInput');
     const btnSubmit = document.getElementById('btnSubmit');
 
-    // Generar la cuadrícula de 100 números
     for (let i = 1; i <= TOTAL_TICKETS; i++) {
       const ticket = document.createElement('div');
       ticket.classList.add('ticket');
@@ -298,9 +297,10 @@
       const ticketsStr = Array.from(selectedTickets).sort((a, b) => a - b).join(', ');
       const totalPay = selectedTickets.size * 20;
 
-      const message = `¡Hola! Mi nombre es *${name}*. Me gustaría apartar el/los boleto(s) *#${ticketsStr}* para la Rifa en *Sorteos Atlacomulco* ($1,000 MXN en efectivo).\n\nTotal a pagar: *$${totalPay} MXN*.\n\nQuedo a la espera de los datos de pago.`;
+      const message = `¡Hola! Mi nombre es *${name}*. Me gustaría apartar el/los boleto(s) *#${ticketsStr}* para la Rifa en *Sorteos Atlacomulco* ($1,200 MXN en efectivo).\n\nTotal a pagar: *$${totalPay} MXN*.\n\nQuedo a la espera de los datos de pago.`;
 
-      const whatsappUrl = `https://api.whatsapp.com/send?phone=${PHONE_NUMBER}&text=${encodeURIComponent(message)}`;
+      const fullPhone = "521" + MY_PHONE_NUMBER.replace(/\D/g, '');
+      const whatsappUrl = `https://api.whatsapp.com/send?phone=${fullPhone}&text=${encodeURIComponent(message)}`;
       window.open(whatsappUrl, '_blank');
     });
   </script>
